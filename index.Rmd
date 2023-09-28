@@ -1,6 +1,6 @@
 ---
 title: "Gov 50 Final Project"
-author: "Your Name Here"
+author: Hannah Ahn
 description: "My final project"
 output:
   distill::distill_article:
@@ -11,4 +11,8 @@ output:
 
 ## Project thoughts
 
-I am interested in exploring data related to...
+I am interested in exploring data in a few ways - one, I've been increasingly interested in trend analysis, especially with regards to fashion. I'm interested in scraping data from websites like instagram, twitter, reddit, and tiktok in order to figure out which brands are successful, which are failing, and which are doing just fine, especially in the wake of Paris fashion week. I'm also curious about how the trends of certain specific items have matured over time; whether they've decayed or are still going strong. 
+
+I am also interested in doing similar social media web scraping in the context of greenwashing. Is it possible to measure public opinions of companies after they launch greenwashing campaigns? I'm not sure how feasible this thought is, though. 
+
+
