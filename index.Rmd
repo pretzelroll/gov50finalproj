@@ -7,9 +7,14 @@ output:
     self_contained: false
 ---
 
+## Milestone 2 Thoughts
+
+Do greenwashing campaigns actually change consumer's attention to companies? In this study, I plan to examine the extent to which greenwashing campaigns increases consumer's attention to  companies and their sustainability efforts. I hypothesize that consumer's opinions of companies will positively increase in conjunction with greenwashing campaigns. My sample is comprised of five companies known for greenwashing; HM, Zara, Uniqlo, Nike, and Starbucks. I am looking at the following specific cases: 
+In 2019, HM launched their line of "green" clothing called "Conscious." In February of 2022, Zara released a limited edition line of "sustainable fashion" made from polyester created from captured carbon emissions. 
+In March of 2022, Uniqlo partnered with Japanese character "Doraemon" and touted it as a "global sustainability ambassador." Nike launched its "Move to Zero" campaign in September of 2019, and set ambitious goals to eliminate hazardous chemicals and use 100% renewable energy by 2025. Starbucks made the switch to straw-less lids in 2018 (but the lid contained more plastic than the old lid and straw combo). My explanatory variable of interest is the change in consumer attention accompanying the launch of greenwashing campaigns. I believe I can derive a percentage increase/decrease of searches from consumers from the google trends API, and using that, I will calculate my deltas. If I find that the number of searches regarding that brand increased during this time frame, this will support my hypothesis. If the number of searches remains constant or decreases, this would disprove my hypothesis. 
 
 
-## Project thoughts
+## Milestone 1
 
 I am interested in exploring data in a few ways - one, I've been increasingly interested in trend analysis, especially with regards to fashion. I'm interested in scraping data from websites like instagram, twitter, reddit, and tiktok in order to figure out which brands are successful, which are failing, and which are doing just fine, especially in the wake of Paris fashion week. I'm also curious about how the trends of certain specific items have matured over time; whether they've decayed or are still going strong. 
 
