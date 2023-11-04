@@ -7,9 +7,9 @@ output:
     self_contained: false
 ---
 
-##Milestone 3
-
+## Milestone 3
 Why is this not appearing? Test, test
+
 ```{r, echo=FALSE}
 library(tidyverse)
 library(ggplot2)
@@ -45,6 +45,6 @@ I have changed the direction of my project dramatically - I haven't re-written a
 Can google search trends predict increases and decreases in the rates of suicide and depression? 
 I am using https://catalog.data.gov/dataset/death-rates-for-suicide-by-sex-race-hispanic-origin-and-age-united-states-020c1 and https://catalog.data.gov/dataset/drug-overdose-death-rates-by-drug-type-sex-age-race-and-hispanic-origin-united-states-3f72f for information on suicide and overdose rates by race and gender. I will use the Google Trends API to glean search history of terms like "suicide", "depression", and various drugs that can be overdosed on (opioids, alcohol, denzodiazepine, cocaine, heroin, crack, fentanyl, meth, antidepressants, etc). I am currently having problems with accessing the google trends information; I may have to brute force it instead of using gtrendsR. 
 
-##Milestone 1
+## Milestone 1
 
 I am interested in examining whether search history can predict spikes and dips in suicides and overdoses in the United States. 
