@@ -6,34 +6,44 @@ output:
   distill::distill_article:
     self_contained: false
 ---
-```{r}
-library(gtrendsR)
+
+##Milestone 3
+
+```{r, echo=FALSE}
+library(tidyverse)
 library(ggplot2)
+sui_data <- read_csv("data/suicide_death_rates.csv")
+overdose_data <- read_csv("data/overdose_death_rate.csv")
 
-keywords = c("depression")
+#Formatting data!
 
-country = c("US")
+sui_data1 <- subset(sui_data, select = -c(INDICATOR, UNIT_NUM, STUB_LABEL_NUM, YEAR_NUM, STUB_NAME_NUM, AGE_NUM, FLAG)) |> 
+  filter(`STUB_NAME` == "Sex and race", YEAR >= 1999, UNIT == "Deaths per 100,000 resident population, age-adjusted") |> 
+  mutate(gender = if_else(STUB_LABEL == "Female: American Indian or Alaska Native" |STUB_LABEL == "Female: Asian or Pacific Islander" | STUB_LABEL == "Female: Black or African American" | STUB_LABEL ==  "Female: White", "Female", "Male"))
 
-time = ("2018-01-01 2023-11-03")
+sui_plot <- ggplot(data = sui_data1, mapping = aes(x = YEAR, y = ESTIMATE)) + geom_line(mapping = aes(color = STUB_LABEL)) + facet_wrap(~ gender, ncol = 4) + xlab("Year") + ylab("Estimated Number of Deaths per 100,000") + labs(title = "Suicides by Race and Gender", color = "Gender and Race")
 
-channel = "web"
 
-my_data = gtrends(keywords, gprop = channel, geo = country, time = time)
 
-time_my_data = my_data$interest_over_time
+#Doing the same to overdose data! 
 
-plot<-ggplot(data=time_my_data, aes(x=date, y=hits,group=keyword,col=keyword)) + 
-        geom_line() + 
-  xlab('Time') + 
-  ylab('Relative Interest') + 
-        theme(legend.title = element_blank(),
-            legend.position="bottom",
-            legend.text=element_text(size=12)) +
-  ggtitle("Google Search Volume")
-plot
+overdose_data1 <- subset(overdose_data, select = -c(INDICATOR, PANEL_NUM, UNIT, UNIT_NUM, STUB_LABEL_NUM, YEAR_NUM, STUB_NAME_NUM, AGE_NUM, FLAG)) |> 
+  filter(`STUB_NAME` == "Sex and race", `PANEL` == "All drug overdose deaths")|>
+  mutate(gender = if_else(STUB_LABEL == "Female: American Indian or Alaska Native" |STUB_LABEL == "Female: Asian or Pacific Islander" | STUB_LABEL == "Female: Black or African American" | STUB_LABEL ==  "Female: White", "Female", "Male"))
 
+overdose_plot <- ggplot(data = overdose_data1, mapping = aes(x = YEAR, y = ESTIMATE)) + geom_line(mapping = aes(color = STUB_LABEL)) + facet_wrap(~ gender, ncol = 4) + xlab("Year") + ylab("Estimated Number of Deaths per 100,000") + labs(title = "Overdoses by Race and Gender", color = "Gender and Race")
+
+sui_plot
+overdose_plot
 ```
+
 ## Milestone 2 
+
+I have changed the direction of my project dramatically - I haven't re-written a whole proposal yet, but I will soon. 
+
+Can google search trends predict increases and decreases in the rates of suicide and depression? 
+I am using https://catalog.data.gov/dataset/death-rates-for-suicide-by-sex-race-hispanic-origin-and-age-united-states-020c1 and https://catalog.data.gov/dataset/drug-overdose-death-rates-by-drug-type-sex-age-race-and-hispanic-origin-united-states-3f72f for information on suicide and overdose rates by race and gender. I will use the Google Trends API to glean search history of terms like "suicide", "depression", and various drugs that can be overdosed on (opioids, alcohol, denzodiazepine, cocaine, heroin, crack, fentanyl, meth, antidepressants, etc). I am currently having problems with accessing the google trends information; I may have to brute force it instead of using gtrendsR. 
 
 ##Milestone 1
 
+I am interested in examining whether search history can predict spikes and dips in suicides and overdoses in the United States. 
