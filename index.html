@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["data/Electric_Vehicle_Population_Data.csv","data/overdose_death_rate.csv","data/suicide_death_rates.csv","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/figure-html5/unnamed-chunk-1-2.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.24/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["data/Electric_Vehicle_Population_Data.csv","data/gov50finaldata.csv","data/overdose_death_rate.csv","data/strictest-gun-laws-by-state-2023.csv","data/Suicide Rates by State2021.csv","data/suicide_death_rates.csv","gov50finaldata.xlsx","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/figure-html5/unnamed-chunk-1-2.png","index_files/figure-html5/unnamed-chunk-2-1.png","index_files/figure-html5/unnamed-chunk-3-1.png","index_files/figure-html5/unnamed-chunk-3-2.png","index_files/header-attrs-2.17/header-attrs.js","index_files/header-attrs-2.24/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1517,18 +1517,40 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 
 <div class="d-article">
-<h2 id="milestone-3">Milestone 3</h2>
-<p>Why is this not appearing? Test, test</p>
+<h2 id="milestone-4">Milestone 4</h2>
 <div class="layout-chunk" data-layout="l-body">
-<p><img src="index_files/figure-html5/unnamed-chunk-1-1.png" width="624" /><img src="index_files/figure-html5/unnamed-chunk-1-2.png" width="624" /></p>
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="index_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
+<pre><code>
+Call:
+lm(formula = `Suicide Rate 2020` ~ `Gun Law Strength 2020`, data = master_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-7.9315 -2.6722 -0.8001  1.8168  9.8104 
+
+Coefficients:
+                        Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)             10.20359    1.09781   9.294 2.63e-12 ***
+`Gun Law Strength 2020`  0.23256    0.03782   6.148 1.49e-07 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 3.823 on 48 degrees of freedom
+Multiple R-squared:  0.4406,    Adjusted R-squared:  0.4289 
+F-statistic:  37.8 on 1 and 48 DF,  p-value: 1.487e-07</code></pre>
+</div>
+<h1 id="milestone-3">Milestone 3</h1>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="index_files/figure-html5/unnamed-chunk-3-1.png" width="624" /><img src="index_files/figure-html5/unnamed-chunk-3-2.png" width="624" /></p>
 </div>
 <h2 id="milestone-2">Milestone 2</h2>
-<p>I have changed the direction of my project dramatically - I haven’t re-written a whole proposal yet, but I will soon.</p>
-<p>Can google search trends predict increases and decreases in the rates of suicide and depression?
-I am using <a href="https://catalog.data.gov/dataset/death-rates-for-suicide-by-sex-race-hispanic-origin-and-age-united-states-020c1" class="uri">https://catalog.data.gov/dataset/death-rates-for-suicide-by-sex-race-hispanic-origin-and-age-united-states-020c1</a> and <a href="https://catalog.data.gov/dataset/drug-overdose-death-rates-by-drug-type-sex-age-race-and-hispanic-origin-united-states-3f72f" class="uri">https://catalog.data.gov/dataset/drug-overdose-death-rates-by-drug-type-sex-age-race-and-hispanic-origin-united-states-3f72f</a> for information on suicide and overdose rates by race and gender. I will use the Google Trends API to glean search history of terms like “suicide”, “depression”, and various drugs that can be overdosed on (opioids, alcohol, denzodiazepine, cocaine, heroin, crack, fentanyl, meth, antidepressants, etc). I am currently having problems with accessing the google trends information; I may have to brute force it instead of using gtrendsR.</p>
+<p>Does firearm legislation affect the incidence of successful suicide? In this study, I plan to examine the extent to which firearm legislation lowers (or raises) the incidence of successful suicide. For the purposes of this study, I will use data from the Giffords Law Center. My explanatory variable of interest is the change in Gun Law Grade as determined by the GIfford Law institute. My explanatotry variable is masured from the Gifford Law Institute and depends on its ability to correctly classify and rank different states’ gun law strengths. If I observe that suicide rates increase after states’ gun law strength increases, this would provide support for my hypothesis. If I observe that suicide rates stay the same or decrease after states’ gun law strength increases, this would provide evidence against my hypothesis.</p>
 <h2 id="milestone-1">Milestone 1</h2>
-<p>I am interested in examining whether search history can predict spikes and dips in suicides and overdoses in the United States.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>I am interested in examining whether firearm legislation affects incidence of suicide in the United states.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

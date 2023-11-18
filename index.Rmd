@@ -7,9 +7,35 @@ output:
     self_contained: false
 ---
 
-## Milestone 3
-Why is this not appearing? Test, test
+## Milestone 4
 
+
+```{r, echo= FALSE}
+#Setup!
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r, echo= FALSE}
+master_data <- read_csv("data/gov50finaldata.csv")
+
+master_data_plot <- ggplot(data = master_data, mapping = aes(x = `Gun Law Strength 2020`, y = `Suicide Rate 2020`, label = `State`)) +
+  geom_point() +
+  geom_text() +
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(title = "Gun Law Strength vs Suicide Rate by Year",
+       x = "Gun Law Weakness",
+       y = "Suicide Rate per 100k")
+
+regression <- lm(`Suicide Rate 2020` ~ `Gun Law Strength 2020`, data = master_data)
+
+master_data_plot
+
+summary(regression)
+
+```
+
+# Milestone 3
 ```{r, echo=FALSE}
 library(tidyverse)
 library(ggplot2)
@@ -40,11 +66,8 @@ overdose_plot
 
 ## Milestone 2 
 
-I have changed the direction of my project dramatically - I haven't re-written a whole proposal yet, but I will soon. 
-
-Can google search trends predict increases and decreases in the rates of suicide and depression? 
-I am using https://catalog.data.gov/dataset/death-rates-for-suicide-by-sex-race-hispanic-origin-and-age-united-states-020c1 and https://catalog.data.gov/dataset/drug-overdose-death-rates-by-drug-type-sex-age-race-and-hispanic-origin-united-states-3f72f for information on suicide and overdose rates by race and gender. I will use the Google Trends API to glean search history of terms like "suicide", "depression", and various drugs that can be overdosed on (opioids, alcohol, denzodiazepine, cocaine, heroin, crack, fentanyl, meth, antidepressants, etc). I am currently having problems with accessing the google trends information; I may have to brute force it instead of using gtrendsR. 
+Does firearm legislation affect the incidence of successful suicide? In this study, I plan to examine the extent to which firearm legislation lowers (or raises) the incidence of successful suicide. For the purposes of this study, I will use data from the Giffords Law Center. My explanatory variable of interest is the change in Gun Law Grade as determined by the GIfford Law institute. My explanatotry variable is masured from the Gifford Law Institute and depends on its ability to correctly classify and rank different states' gun law strengths. If I observe that suicide rates increase after states' gun law strength increases, this would provide support for my hypothesis. If I observe that suicide rates stay the same or decrease after states' gun law strength increases, this would provide evidence against my hypothesis. 
 
 ## Milestone 1
 
-I am interested in examining whether search history can predict spikes and dips in suicides and overdoses in the United States. 
+I am interested in examining whether firearm legislation affects incidence of suicide in the United states. 
