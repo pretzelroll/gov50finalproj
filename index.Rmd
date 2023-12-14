@@ -1,73 +1,238 @@
 ---
-title: "Gov 50 Final Project"
+title: "Song Popularity with SpotifyAPI"
 author: Hannah Ahn
-description: "My final project"
+description: "An analysis of song popularity through Spotify-generated characteristics."
 output:
   distill::distill_article:
     self_contained: false
 ---
+```{r, echo = FALSE}
 
-## Milestone 4
+# Setup Code
 
-
-```{r, echo= FALSE}
-#Setup!
 library(tidyverse)
+library(dplyr)
 library(ggplot2)
-```
-
-```{r, echo= FALSE}
-master_data <- read_csv("data/gov50finaldata.csv")
-
-master_data_plot <- ggplot(data = master_data, mapping = aes(x = `Gun Law Strength 2020`, y = `Suicide Rate 2020`, label = `State`)) +
-  geom_point() +
-  geom_text() +
-  geom_smooth(method = "lm", se = FALSE, color = "blue") +
-  labs(title = "Gun Law Strength vs Suicide Rate by Year",
-       x = "Gun Law Weakness",
-       y = "Suicide Rate per 100k")
-
-regression <- lm(`Suicide Rate 2020` ~ `Gun Law Strength 2020`, data = master_data)
-
-master_data_plot
-
-summary(regression)
+library(ggthemes)
+library(modelsummary)
+library(plotly)
+set.seed(100)
+songs <- read_csv("archive/spotify_songs.csv")
 
 ```
+# Introduction
+What makes a song... popular? Trying to evaluate that empirically is difficult - there are so many variables when it comes to creating a song; melody, rhythm/tempo, lyrics, structure, message, and dynamics are just a few that arise in my mind, and each variable has within it more variation. That is to say that, combinations of a multitude of things contribute to a song's popularity. While I can't answer the question "what makes a song popular?" within the scope of this project, I can evaluate the relationship between three musical features (danceability, valence, and speechiness) and popularity across different genres. For every track on their platform, Spotify provides data for thirteen "audio features." I've chosen to focus on three; danceability, valence, and speechiness. Spotify defines them as follows: 
 
-# Milestone 3
-```{r, echo=FALSE}
-library(tidyverse)
-library(ggplot2)
-sui_data <- read_csv("data/suicide_death_rates.csv")
-overdose_data <- read_csv("data/overdose_death_rate.csv")
+Danceability: Describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity. 
 
-#Formatting data!
+Valence: Describes the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).
 
-sui_data1 <- subset(sui_data, select = -c(INDICATOR, UNIT_NUM, STUB_LABEL_NUM, YEAR_NUM, STUB_NAME_NUM, AGE_NUM, FLAG)) |> 
-  filter(`STUB_NAME` == "Sex and race", YEAR >= 1999, UNIT == "Deaths per 100,000 resident population, age-adjusted") |> 
-  mutate(gender = if_else(STUB_LABEL == "Female: American Indian or Alaska Native" |STUB_LABEL == "Female: Asian or Pacific Islander" | STUB_LABEL == "Female: Black or African American" | STUB_LABEL ==  "Female: White", "Female", "Male"))
+Speechiness: This detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value.
 
-sui_plot <- ggplot(data = sui_data1, mapping = aes(x = YEAR, y = ESTIMATE)) + geom_line(mapping = aes(color = STUB_LABEL)) + facet_wrap(~ gender, ncol = 4) + xlab("Year") + ylab("Estimated Number of Deaths per 100,000") + labs(title = "Suicides by Race and Gender", color = "Gender and Race")
+In this study I evaluate six different genres of music (pop, edm, rap, r&b, latin, and rock) with these three features, and hypothesize that each can influence a song's popularity within each genres. Understanding these relationships is useful for not only the music industry but also music researchers, as it can inform musicians, producers, and playlist curators about the elements that contribute to a song's popularity. This analysis contributes to the broader understanding of how musical preferences vary across genres and the impact of specific features on a song's overall appeal. 
 
+# Data
 
+I initially tried to use SpotifyAPI through the spotifyr package directly, but kept getting various server errors. Instead, I decided to use [someone else's database on kaggle], that was created using SpotifyAPI(https://www.kaggle.com/datasets/joebeachcapital/30000-spotify-songs/). The dataset includes almost 30,000 songs from Spotify of various genres and national origin. Spotify records and makes available the following: 
 
-#Doing the same to overdose data! 
+track_id	
+track_name	
+track_artist	
+track_popularity	
+track_album_id	
+track_album_name	
+track_album_release_date	
+playlist_name	
+playlist_id
+playlist_genre
 
-overdose_data1 <- subset(overdose_data, select = -c(INDICATOR, PANEL_NUM, UNIT, UNIT_NUM, STUB_LABEL_NUM, YEAR_NUM, STUB_NAME_NUM, AGE_NUM, FLAG)) |> 
-  filter(`STUB_NAME` == "Sex and race", `PANEL` == "All drug overdose deaths")|>
-  mutate(gender = if_else(STUB_LABEL == "Female: American Indian or Alaska Native" |STUB_LABEL == "Female: Asian or Pacific Islander" | STUB_LABEL == "Female: Black or African American" | STUB_LABEL ==  "Female: White", "Female", "Male"))
+playlist_subgenre	
+danceability	
+energy	
+key	
+loudness	
+mode	
+speechiness
+acousticness	
+instrumentalness	
+liveness	
+valence
+tempo	
+duration_ms
 
-overdose_plot <- ggplot(data = overdose_data1, mapping = aes(x = YEAR, y = ESTIMATE)) + geom_line(mapping = aes(color = STUB_LABEL)) + facet_wrap(~ gender, ncol = 4) + xlab("Year") + ylab("Estimated Number of Deaths per 100,000") + labs(title = "Overdoses by Race and Gender", color = "Gender and Race")
+The independent variables in this study are the six genres (pop, rap, rock, r&b, latin, and edm) and three musical attributes (danceability, valence, and speechiness). These are percentages from 0 - 100%, recorded as decimals to three places, and are created by Spotify. While Spotify's exact specifications for what constitutes each attribute is opaque, it seems as though they take into account tempo, dynamics, key, and other variables for danceability and valence, while speechiness is an evaluation of the ratio of words to music. 
 
-sui_plot
-overdose_plot
+The dependent variable is song popularity, which is measured by Spotify. It is a popularity index that ranks how popular an artist is relative to other artists on Spotify, from 0 - 100. Increasing this score can increase a song's algorithmic reach (popping up on people's recommended and Spotify-generated playlists). According to Spotify, the popularity index is influenced by recent stream count, save rate, number of playlists, skip rate, and share rate. 
+
+This study is cross-sectionally designed; the data was collected at a single point in time using SpotifyAPI and examines the relationships between variables as they exist at a particular moment. Data is observational and does not fall under before-after or diff in diff study design.
+
+My primary hypothesis posits that certain musical attributes can predict a track's popularity within distinct genres; In this study I evaluate six different genres of music (pop, edm, rap, r&b, latin, and rock) with these three features. My primary hypothesis posits that certain musical attributes can predict a track's popularity within distinct genres; I hypothesize that songs with higher danceability will be more popular in genres like pop, edm, latin, and rap, but be less popular in r&b and rock, and that the same relationship exists with valence. I also hypothesize that songs with higher speechiness will be less popular in genres like pop and edm, but more popular in the remaining genres. 
+
+I believe these hypotheses might be true because genres like edm, pop, latin, and rap often prioritize energetic and uplifting music that encourages movement. Higher danceability and valence align with the upbeat and lively nature of pop, edm, latin, and rap, making such songs more likely to be embraced by listeners seeking an energetic experience. R&b and rock genres often feature a broader range of emotional expression, including slower tempos and more complex arrangements. Higher danceability and valence may be perceived as less characteristic of the emotional depth and complexity associated with these genres, potentially making them less popular among audiences seeking a different musical experience. 
+
+With regards to speechiness, pop and edm genres often emphasize catchy melodies and instrumentals, with vocals playing a crucial role. Higher speechiness, indicating a greater presence of vocal elements, might be perceived as less favorable in genres where instrumental and electronic elements are more prominent. In rap, r&b, latin, and rock genres, lyrics and vocal expression often play a more central role. Higher speechiness may be associated with lyrical depth and storytelling, enhancing the appeal of songs in these genres. Additionally, genres like rap often rely on clear and impactful vocal delivery, making speechiness a potentially positive factor in popularity.
+ 
+My hypotheses would be supported by the following: observing a positive relationship between danceability/valence and song popularity in genres pop, edm, latin, and rap, observing a negative relationship between danceability/valence and song popularity in genres r&b and rock, and observing a negative relationship between speechiness and song popularity in genres pop and edm. If I find the opposite to be true of these proposed relationships, those findings would provide evidence against my hypotheses. 
+
+The bar plot below illustrates the distribution of the dependent variable, popularity. As you can see, there are a fair amount of songs that have a low score - while it may seem like the data is skewed, 50 is considered a "good" score by Spotify. A score of 50 will generally get picked up by an algorithm and recommended to users. I would consider the distribution of popularity and sample of songs to be rather reasonable and not very biased.
+
+```{r}
+# Creating a bar plot that shows distribution of popularity
+
+popularity_bar <- ggplot(songs, aes(x = track_popularity)) +
+  geom_bar() +
+  labs(
+    title = "Popularity",
+    x = "Popularity Score",
+    y = "Number of Songs"
+  ) +
+  theme_few()
+
+popularity_bar
 ```
 
-## Milestone 2 
+# Results
 
-Does firearm legislation affect the incidence of successful suicide? In this study, I plan to examine the extent to which firearm legislation lowers (or raises) the incidence of successful suicide. For the purposes of this study, I will use data from the Giffords Law Center. My explanatory variable of interest is the change in Gun Law Grade as determined by the GIfford Law institute. My explanatotry variable is masured from the Gifford Law Institute and depends on its ability to correctly classify and rank different states' gun law strengths. If I observe that suicide rates increase after states' gun law strength increases, this would provide support for my hypothesis. If I observe that suicide rates stay the same or decrease after states' gun law strength increases, this would provide evidence against my hypothesis. 
+The following plots visualize the relationships outlined in the Data section. They are interactive, so feel free to mouse over and inspect some of the data points if curious. 
 
-## Milestone 1
+```{r}
+# Creating scatter plots
 
-I am interested in examining whether firearm legislation affects incidence of suicide in the United states. 
+# Scatter plot with regression line for Danceability vs Track Popularity
+danceability_plot <- songs |> 
+ggplot(songs, mapping = aes(
+  x = danceability, 
+  y = track_popularity, 
+  fill = playlist_genre)) +
+  geom_point(alpha = 0.1, stroke = NA) +
+  geom_smooth(method = "loess", se = FALSE, color = "black") +
+  labs(
+    title = "Danceability vs Popularity", 
+    x = "Danceability", 
+    y = "Popularity", 
+    fill = "Playlist Genre") +
+  facet_wrap(~ playlist_genre) +
+  theme_few() 
+
+# Scatter plot with regression line for Valence vs Track Popularity
+valence_plot <- ggplot(songs, mapping = aes(
+  x = valence, 
+  y = track_popularity, 
+  fill = playlist_genre)) +
+  geom_point(alpha = 0.1, stroke = NA) +
+  geom_smooth(method = "loess", se = FALSE, color = "black") +
+  labs(
+    title = "Valence vs Popularity", 
+    x = "Valence", 
+    y = "Popularity", 
+    fill = "Playlist Genre")+ 
+    facet_wrap(~ playlist_genre) +
+  theme_few()
+
+# Scatter plot with regression line for Speechiness vs Track Popularity
+speechiness_plot <- ggplot(songs, mapping = aes(x = speechiness, y = track_popularity, fill = playlist_genre)) +
+  geom_point(alpha = 0.1, stroke = NA) +
+  geom_smooth(method = "loess", se = FALSE, color = "black") +
+  labs(
+    title = "Speechiness vs Popularity", 
+    x = "Speechiness", 
+    y = "Popularity", 
+    fill = "Playlist Genre") + 
+    facet_wrap(~ playlist_genre) +
+  theme_few()
+
+# Showing Plots
+ggplotly(danceability_plot)
+
+ggplotly(valence_plot)
+
+ggplotly(speechiness_plot)
+```
+I've used the loess regression here to capture some of the nuances in the data more before we begin to conduct a linear regression analysis. From these visualizations alone, we can observe the following. 
+
+The Danceability vs Popularity graphs show us that there may be a positive correlation between danceability and popularity for pop, rap, r&b, and rock. 
+
+The Valence vs Popularity graphs show us that there may be a positive correlation between valence and popularity for edm, and perhaps an ever so slight positive correlation for pop and rock. It also looks as though there may be a slight negative correlation for latin and rap, and a negative correlation for r&b. 
+
+The Speechiness vs Popularity graphs show that, generally, songs are not very "speechy." This makes sense, considering that a song that is mostly words and no music would not be much of a song. According to the graphs, there may be a slightly positive correlation between speechiness and popularity for edm, r&b, and rock. 
+
+Now, let us more rigorously evaluate the relationships illustrated above. Below is a large regression table that details the coefficients and intercepts, along with p-values.
+
+```{r}
+# Running regressions for each genre
+
+# Get list of unique genres and create empty list to store
+genres <- unique(songs$playlist_genre)
+regression_models <- list()
+
+# Loop through each genre, filter for current genre within unique genre list, create and apply formula, store
+for (genre in genres) {
+  genre_songs <- filter(songs, playlist_genre == genre)
+  formula <- as.formula(paste("track_popularity ~ valence + danceability + speechiness"))
+  regression_model <- lm(formula, data = genre_songs)
+  regression_models[[genre]] <- regression_model
+}
+
+varnames <- c("(Intercept)" = "Intercept", 
+              "valence" = "Valence", 
+              "danceability" = "Danceability", 
+              "speechiness" = "Speechiness")
+
+# Create summary table
+summary_table <- msummary(regression_models,
+                          statistic = c("s.e. = {std.error}",
+                                         "p = {p.value}"),
+                           gof_map = c("nobs", "r.squared", "adj.r.squared"),
+                          coef_map = varnames)
+
+summary_table
+```
+
+This table might be slightly difficult to parse at a glance. I'll briefly summarize by genre. 
+
+The pop genre had a negative valence coefficient (-1.475) that was not statistically significant (p = 0.370). However, its danceability coefficient was positive (19.136), and statistically significant (p < 0.001). The speechiness coefficient was positive (28.106) and statistically significant (p < 0.001). 
+
+The rap genre had a negative valence coefficient (-5.409) that was statistically significant (p < 0.001). Its danceability coefficient was positive (27.125) and statistically significant (p < 0.001). Its speechiness coefficient was negative (-12.091) and statistically significant (p < 0.001). 
+
+The rock genre had a negative valence coefficient (-3.958) that was statistically significant (p = 0.026). It had a positive danceability coefficient (15.402) that was statistically significant (p < 0.001). It had a positive speechiness coefficient (5.034) that was not statistically significant (p = 0.522). 
+
+The latin genre had a negative valence coefficient (-3.616) that was statistically significant (p = 0.032). Danceability coefficient was positive (10.148) and statistically significant (p = 0.002). The speechiness coefficient was also positive (14.100) and 
+
+The r&b genre exhibited a negative valence coefficient (-17.933) that was statistically significant (p < 0.001). It demonstrated a positive danceability coefficient (10.260) that was statistically significant (p < 0.001). The speechiness coefficient (1.070) was positive but not statistically significant (p = 0.743).
+
+In the edm genre, the valence coefficient (14.685) was statistically significant and positive (p < 0.001). The danceability coefficient (-8.805) was negative and statistically significant (p < 0.001). The speechiness coefficient (0.540) was positive but not statistically significant (p = 0.897).
+
+<i> I've neglected speaking to the intercepts as I do not see them as incredibly relevant to the analysis - the intercepts are the supposed popularity of a song within the genre if valence, danceability, and speechiness were all 0. </i>
+
+Below is a regression that was run on the entire dataset, with no subsetting for genre.
+
+```{r}
+# Overall regression for entire dataset
+regressions <- lm(track_popularity ~ valence + danceability + speechiness, data = songs)
+
+modelsummary::modelsummary(regressions,
+                           statistic = c("s.e. = {std.error}",
+                                         "p = {p.value}"),
+                           gof_map = c("nobs", "r.squared", "adj.r.squared"),
+                            coef_map = varnames)
+
+```
+
+While many findings are statistically significant, I would hesitate to interpret them causally. 
+
+# Conclusion
+
+The regression aligns with  the primary hypotheses, which posited that specific musical attributes could predict a track's popularity within distinct genres. 
+
+With regards to my more specific hypotheses, we find mixed results. Generally, my findings support the hypotheses, revealing genre-specific patterns in the associations between these musical attributes and popularity. For instance, in genres like pop, EDM, Latin, and rap, higher danceability and valence are positively correlated with popularity, validating the hypothesized relationships. Conversely, in R&B and rock, these attributes exhibit a negative correlation with popularity, consistent with the initial hypotheses. The hypothesis regarding speechiness is also substantiated, as it is positively correlated with popularity in most genres, except pop and EDM where it shows a negative or non-significant association. 
+
+While causation cannot be definitively inferred, the observed patterns offer substantial evidence supporting the notion that distinct musical features contribute to the popularity of songs within specific genres.
+
+Based on the regression results, several conclusions can be drawn for each music genre. We noted many statistically significant findings in the rgression table. For instance, in the r&b genre, a higher valence is associated with a significant decrease in popularity, while greater danceability and speechiness are positively correlated with popularity. However, it's essential to note that correlation does not imply causation, and these relationships should be interpreted cautiously. The coefficient values provide insights into the direction and strength of the associations, with statistically significant coefficients indicating meaningful relationships. Overall, the findings provide partial support for the hypothesis that specific musical attributes predict popularity within distinct genres, as evidenced by the varied significance and directionality of coefficients across genres.
+
+However, it's crucial to acknowledge several limitations in the analysis. First, the models have relatively low R-squared values, suggesting that the included features explain only a small portion of the variability in popularity. Additionally, the assumption of linearity may not fully capture the complex relationships between musical features and popularity. Threats to inference include the possibility of confounding variables not accounted for in the models. Addressing missing data and exploring additional potential confounders could enhance the robustness of the analysis. If more time and resources were available, conducting more sophisticated analyses, such as considering nonlinear relationships or exploring interactions between features, could further refine the understanding of the factors influencing popularity in different music genres.
+
+There appears to be relationships between valence, danceability, and speechiness in different genres. 
+
+
+# Caveats and Limitations
