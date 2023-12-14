@@ -192,6 +192,8 @@ This table might be slightly difficult to parse at a glance. I'll briefly summar
 
 The pop genre had a negative valence coefficient (-1.475) that was not statistically significant (p = 0.370). However, its danceability coefficient was positive (19.136), and statistically significant (p < 0.001). The speechiness coefficient was positive (28.106) and statistically significant (p < 0.001). 
 
+<i> It is important to remember, here, how these scores are scaled. Each of the music features are a decimal value between 0 and 1, denoting a percentage. Therefore, it is impossible to have a one-point increase in valence, for example, if valence is already 0.5 or 50%. While the danceability coefficient above indicates that, for a one-unit increase in danceability, popularity will increase about 19 points, this is impossible to see in reality. </i>
+
 The rap genre had a negative valence coefficient (-5.409) that was statistically significant (p < 0.001). Its danceability coefficient was positive (27.125) and statistically significant (p < 0.001). Its speechiness coefficient was negative (-12.091) and statistically significant (p < 0.001). 
 
 The rock genre had a negative valence coefficient (-3.958) that was statistically significant (p = 0.026). It had a positive danceability coefficient (15.402) that was statistically significant (p < 0.001). It had a positive speechiness coefficient (5.034) that was not statistically significant (p = 0.522). 
@@ -203,6 +205,10 @@ The r&b genre exhibited a negative valence coefficient (-17.933) that was statis
 In the edm genre, the valence coefficient (14.685) was statistically significant and positive (p < 0.001). The danceability coefficient (-8.805) was negative and statistically significant (p < 0.001). The speechiness coefficient (0.540) was positive but not statistically significant (p = 0.897).
 
 <i> I've neglected speaking to the intercepts as I do not see them as incredibly relevant to the analysis - the intercepts are the supposed popularity of a song within the genre if valence, danceability, and speechiness were all 0. </i>
+
+More generally, we can see that valence, overall, seems to be negatively associated with popularity. Danceability seems generally positively associated. Speechiness throws us some mixed results, with a surprisingly positive, statistically significant correlation with popularity within the genre of pop. 
+
+I would hesitate to interpret these as directly causal. There are a few reasons for this. One is the presence of potential confounding variables - less calculable elements like how memorable a melody is may contribute both to a measure of danceability and popularity, for example. The relationship between musical features and popularity could also be bidirectional - wile the analysis assumes that musical attributes influence popularity, it is plausible that song popularity influences how Spotify measures valence or danceability. However, the fact that there are some statistically significant relationships suggests that there exists a relationship between genre, music features, and popularity. Furthermore, all r-squared values are extremely small. This implies that the included features explain only a small portion of the variability in popularity. 
 
 Below is a regression that was run on the entire dataset, with no subsetting for genre.
 
@@ -218,19 +224,22 @@ modelsummary::modelsummary(regressions,
 
 ```
 
-While many findings are statistically significant, I would hesitate to interpret them causally. 
+Here, we can see that valence and danceability both have some positive, statistically significant relationship with popularity, while speechiness is both negatively-related and not statistically significant. We again observe very small r-squared values. 
+
 
 # Conclusion
 
-The regression aligns with  the primary hypotheses, which posited that specific musical attributes could predict a track's popularity within distinct genres. 
+The regression table and overall regression both align with my primary hypotheses, which posited that specific musical attributes were related to a track's popularity within distinct genres. 
 
-With regards to my more specific hypotheses, we find mixed results. Generally, my findings support the hypotheses, revealing genre-specific patterns in the associations between these musical attributes and popularity. For instance, in genres like pop, EDM, Latin, and rap, higher danceability and valence are positively correlated with popularity, validating the hypothesized relationships. Conversely, in R&B and rock, these attributes exhibit a negative correlation with popularity, consistent with the initial hypotheses. The hypothesis regarding speechiness is also substantiated, as it is positively correlated with popularity in most genres, except pop and EDM where it shows a negative or non-significant association. 
+With regards to my more specific hypotheses, we find mixed results. Generally, my findings support the hypotheses, revealing genre-specific patterns in the associations between these musical attributes and popularity. For instance, as predicted, genres like pop, EDM, Latin, and rap, exhibited higher danceability and valence are positively correlated with popularity, validating the hypothesized relationships. Conversely, in R&B and rock, these attributes exhibit a negative correlation with popularity, consistent with the initial hypotheses. The hypothesis regarding speechiness is also substantiated, as it is positively correlated with popularity in most genres, except pop and EDM where it shows a negative or non-significant association. 
 
 While causation cannot be definitively inferred, the observed patterns offer substantial evidence supporting the notion that distinct musical features contribute to the popularity of songs within specific genres.
 
 Based on the regression results, several conclusions can be drawn for each music genre. We noted many statistically significant findings in the rgression table. For instance, in the r&b genre, a higher valence is associated with a significant decrease in popularity, while greater danceability and speechiness are positively correlated with popularity. However, it's essential to note that correlation does not imply causation, and these relationships should be interpreted cautiously. The coefficient values provide insights into the direction and strength of the associations, with statistically significant coefficients indicating meaningful relationships. Overall, the findings provide partial support for the hypothesis that specific musical attributes predict popularity within distinct genres, as evidenced by the varied significance and directionality of coefficients across genres.
 
-However, it's crucial to acknowledge several limitations in the analysis. First, the models have relatively low R-squared values, suggesting that the included features explain only a small portion of the variability in popularity. Additionally, the assumption of linearity may not fully capture the complex relationships between musical features and popularity. Threats to inference include the possibility of confounding variables not accounted for in the models. Addressing missing data and exploring additional potential confounders could enhance the robustness of the analysis. If more time and resources were available, conducting more sophisticated analyses, such as considering nonlinear relationships or exploring interactions between features, could further refine the understanding of the factors influencing popularity in different music genres.
+However, it's crucial to acknowledge several limitations of this study. First, as mentioned, the models have relatively low R-squared values, 
+
+Additionally, the assumption of linearity may not fully capture the complex relationships between musical features and popularity. Threats to inference include the possibility of confounding variables not accounted for in the models. Addressing missing data and exploring additional potential confounders could enhance the robustness of the analysis. If more time and resources were available, conducting more sophisticated analyses, such as considering nonlinear relationships or exploring interactions between features, could further refine the understanding of the factors influencing popularity in different music genres.
 
 There appears to be relationships between valence, danceability, and speechiness in different genres. 
 
