@@ -45,7 +45,6 @@ track_album_release_date
 playlist_name	
 playlist_id
 playlist_genre
-
 playlist_subgenre	
 danceability	
 energy	
@@ -90,10 +89,9 @@ popularity_bar <- ggplot(songs, aes(x = track_popularity)) +
 
 popularity_bar
 ```
-
 # Results
 
-The following plots visualize the relationships outlined in the Data section. They are interactive, so feel free to mouse over and inspect some of the data points if curious. 
+The following plots visualize the relationships outlined in the Data section.
 
 ```{r}
 # Creating scatter plots
@@ -142,11 +140,11 @@ speechiness_plot <- ggplot(songs, mapping = aes(x = speechiness, y = track_popul
   theme_few()
 
 # Showing Plots
-ggplotly(danceability_plot)
+danceability_plot
 
-ggplotly(valence_plot)
+valence_plot
 
-ggplotly(speechiness_plot)
+speechiness_plot
 ```
 I've used the loess regression here to capture some of the nuances in the data more before we begin to conduct a linear regression analysis. From these visualizations alone, we can observe the following. 
 
