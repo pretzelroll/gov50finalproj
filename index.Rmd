@@ -140,11 +140,11 @@ speechiness_plot <- ggplot(songs, mapping = aes(x = speechiness, y = track_popul
   theme_few()
 
 # Showing Plots
-danceability_plot
+ggplotly(danceability_plot)
 
-valence_plot
+ggplotly(valence_plot)
 
-speechiness_plot
+ggplotly(speechiness_plot)
 ```
 I've used the loess regression here to capture some of the nuances in the data more before we begin to conduct a linear regression analysis. From these visualizations alone, we can observe the following. 
 
